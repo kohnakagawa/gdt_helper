@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "gdt_helper"
+version = "0.1.0"
+description = ""
+authors = ["Koh M. Nakagawa <tsunekou1019@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+typer = "^0.3.2"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+mypy = "^0.770"
+flake8 = "^3.7.9"
+isort = "^4.3.21"
+black = "^19.10b0"
+flake8-isort = "^4.0.0"
+flake8-black = "^0.2.1"
+pre-commit = "^2.9.3"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
