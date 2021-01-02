@@ -56,7 +56,7 @@ def get_compiler_paths(compiler_raw_output: str) -> List[str]:
     for line in compiler_raw_output.split("\n"):
         if line.startswith("COMPILER_PATH="):
             path_var = line.split("=")[-1]
-            return path_var.split(":")
+            return ["-I" + i for i in path_var.split(":")]
     return []
 
 
