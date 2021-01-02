@@ -107,42 +107,70 @@ def get_parse_options(compiler_path: str) -> List[str]:
 
 
 @app.command()
-def show_parse_options(compiler_path: str) -> None:
+def make_parse_options(compiler_path: str) -> None:
     if not has_compiler(compiler_path):
         return
 
-    parse_options = get_parse_options(compiler_path)
-    typer.echo('Please past the following output to "Parse Options"\n')
-    typer.echo("\n".join(parse_options))
+    try:
+        parse_options = get_parse_options(compiler_path)
+        show_warn('Please past the following output to "Parse Options"\n')
+        typer.echo("\n".join(parse_options))
+    except Exception as e:
+        show_err(str(e))
+        show_err("Cannot make parse options")
+
+
+def remove_inline_assembly(raw_in: str) -> str:
+    # Ghidra cannot recognize __asm__ syntax. So these are replaced by comments.
+    return re.sub(r"__asm__.*?;", r"/*__asm__*/;", raw_in, flags=re.DOTALL)
 
 
 @app.command()
-def show_raw_header(compiler_path: str, input_header_path: str) -> None:
+def make_file_to_parse(
+    compiler_path: str, input_header_path: str, additional_includes: List[str] = []
+) -> None:
     if not os.path.exists(input_header_path):
         show_err(f"{input_header_path} does not exist")
         return
     if not has_compiler(compiler_path):
         return
 
+    additional_includes = ["-I" + inc for inc in additional_includes]
+    raw_out = None
     try:
+        compile_cmds = [
+            compiler_path,
+            "-std=c89",
+            "-P",
+            "-E",
+            input_header_path,
+        ] + additional_includes
         raw_out = subprocess.run(
-            [compiler_path, "-std=c89", "-P", "-E", input_header_path],
+            compile_cmds,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             check=True,
         )
     except Exception as e:
         show_err(str(e))
+        if raw_out is not None:
+            show_err(raw_out.stderr.decode("utf-8"))
+            show_err(raw_out.stdout.decode("utf-8"))
         return
 
-    raw_header = re.sub(
-        r"__asm__.*;", r"/*__asm__*/", raw_out.stdout.decode("utf-8"), flags=re.DOTALL
-    )
+    source_to_parse = raw_out.stdout.decode("utf-8")
+    source_to_parse = remove_inline_assembly(source_to_parse)
     output_header_path = input_header_path + ".out"
     with open(output_header_path, "w") as fout:
-        fout.write(raw_header)
+        fout.write(source_to_parse)
 
-    show_log(f'Please add "{output_header_path}" to "Source files to parse"')
+    show_warn(f'Please add "{output_header_path}" to "Source files to parse"\n')
+    if additional_includes:
+        show_warn("You also have specified additional includes as arguments")
+        show_warn(
+            'So, please add the following header includes to "Parse configuration"'
+        )
+        typer.echo("\n".join(additional_includes))
 
 
 if __name__ == "__main__":

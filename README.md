@@ -8,7 +8,7 @@ Gdt helper solves this problem. It makes "Parse Cofigurations" for your envorinm
 
 # How to use
 
-See [example](./example).
+1.
 
 # Supported
 
