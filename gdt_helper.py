@@ -125,6 +125,26 @@ def remove_inline_assembly(raw_in: str) -> str:
     return re.sub(r"__asm__.*?;", r"/*__asm__*/;", raw_in, flags=re.DOTALL)
 
 
+def remove_return_braces(raw_in: str) -> str:
+    return re.sub(r"return[^;]*?{[^;]*?}.*?;", r"return;", raw_in, flags=re.DOTALL)
+
+
+def remove_braces_initialize(raw_in: str) -> str:
+    ret_str = ""
+    for line in raw_in.split("\n"):
+        if re.search(r"{[\d.,f ]*?}", line) is None:
+            ret_str += line + "\n"
+    return ret_str
+
+
+def remove_nonsupported_types(raw_in: str) -> str:
+    ret_str = ""
+    for line in raw_in.split("\n"):
+        if "__int128" not in line:
+            ret_str += line + "\n"
+    return ret_str
+
+
 @app.command()
 def make_file_to_parse(
     compiler_path: str, input_header_path: str, additional_includes: List[str] = []
@@ -160,6 +180,16 @@ def make_file_to_parse(
 
     source_to_parse = raw_out.stdout.decode("utf-8")
     source_to_parse = remove_inline_assembly(source_to_parse)
+    if "x86_64-w64-mingw32-gcc" in compiler_path:
+        show_warn("Post processing for mingw64")
+        source_to_parse = remove_return_braces(source_to_parse)
+        source_to_parse = remove_braces_initialize(source_to_parse)
+        source_to_parse = remove_nonsupported_types(source_to_parse)
+        show_warn("You might encounter Ghidra parse errors for this file.")
+        show_warn(
+            "If so, please remove some functions (_cvtsh_ss in my envorinment)"
+            " manually according to CParserPlugin.out\n"
+        )
     output_header_path = input_header_path + ".out"
     with open(output_header_path, "w") as fout:
         fout.write(source_to_parse)
