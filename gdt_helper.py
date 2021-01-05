@@ -147,7 +147,9 @@ def remove_nonsupported_types(raw_in: str) -> str:
 
 @app.command()
 def make_file_to_parse(
-    compiler_path: str, input_header_path: str, additional_includes: List[str] = []
+    compiler_path: str,
+    input_header_path: str,
+    additional_includes: List[str] = typer.Option([]),
 ) -> None:
     if not os.path.exists(input_header_path):
         show_err(f"{input_header_path} does not exist")

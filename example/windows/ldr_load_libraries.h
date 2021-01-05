@@ -11,4 +11,4 @@ NTSYSAPI NTSTATUS NTAPI LdrLoadDll(
   PWCHAR               PathToFile OPTIONAL,
   ULONG                Flags OPTIONAL,
   PUNICODE_STRING      ModuleFileName,
-  PHANDLE             ModuleHandle);
+  PHANDLE              ModuleHandle);

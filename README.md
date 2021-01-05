@@ -40,16 +40,26 @@ Please past the following output to "Parse Options"
 2. Make a source file to parse and select this file as "Source files to parse." You can also specify additional include directories.
 
 ```bash
-$ python gdt_helper.py make-file-to-parse clang example/osx/osx_system.h [Additional include directories]
+$ python gdt_helper.py make-file-to-parse clang example/osx/mac_system.h --additional-includes /Library/Developer/CommandLineTools/SDKs/MacOSX10.16.sdk/usr/include
+Please add "./example/osx/mac_system.h.out" to "Source files to parse"
+
+You also have specified additional includes as arguments
+So, please add the following header includes to "Parse configuration"
+-I/Library/Developer/CommandLineTools/SDKs/MacOSX10.16.sdk/usr/include
 ```
 
 3. Select "Parse to Program" (for importing data types to current project) or "Parse to File" (for creating gdt files)
 
-# Supported
+See also [example](./example/README.md).
+
+# Tested
 
 - Ubuntu 20.04
-- macOS
+- macOS Catalina
+
+Windows is not supported. If you want to create some data types of Windows headers, you can do it via MinGW on Linux.
+For more details, see [Windows example](./example/windows).
 
 # Special thanks
 
-Inspired by https://github.com/0x6d696368/ghidra-data/blob/master/typeinfo/README.md.
+The implementation of this script heavily relies on https://github.com/0x6d696368/ghidra-data/blob/master/typeinfo/README.md.
