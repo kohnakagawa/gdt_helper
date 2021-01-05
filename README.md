@@ -1,13 +1,13 @@
 # Gdt helper
 
-Ghidra has "Parse C Source" feature to add new struct or function types to "Data Type Manager."
+Ghidra has "Parse C Source" feature to add new structs or function types to "Data Type Manager."
 Using this feature, we can add the types to "Data Type Manager" by writing C header file.
 
 However, this is not easily performed as expected.
-Without setting "Parse Configuration" propely, Ghidra cannot parse a relatively simple C header file.
+Without setting "Parse Configuration" properly, Ghidra cannot parse a relatively simple C header file.
 Although several "Parse Configurations" are provided by default, this does not work properly :(.
 
-Gdt helper solves this problem. It makes "Parse Cofigurations" for your envorinment.
+Gdt helper solves this problem. It makes "Parse Configurations" for your environment.
 
 # How to use
 
