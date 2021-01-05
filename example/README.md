@@ -1,6 +1,7 @@
 # Example
 
 This directory contains some examples of creating data types and function definitions using gdt helper.
+You might also need to edit output header files to parse properly, but in that case this script tries to warn you.
 
 [linux](./linux) contains an example to create data types and function definitions of OpenSSL.
 
