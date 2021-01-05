@@ -9,6 +9,17 @@ Although several "Parse Configurations" are provided by default, this does not w
 
 Gdt helper solves this problem. It makes "Parse Configurations" for your environment.
 
+# Prepare to use
+
+Before use this script, you need to install poetry and Python (3.8) to resolve its dependencies.
+You can install all dependencies in the following commands.
+
+```
+$ poetry shell
+$ poetry update
+$ poetry install
+```
+
 # How to use
 
 1. Make "Parse Options" and paste it.
@@ -58,7 +69,7 @@ See also [example](./example/README.md).
 - macOS Catalina
 
 Windows is not supported. If you want to create some data types of Windows headers, you can do it via MinGW on Linux.
-For more details, see [Windows example](./example/windows).
+For more details, see [Windows example](./example/README.md).
 
 # Special thanks
 
