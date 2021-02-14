@@ -9,10 +9,10 @@ Although several "Parse Configurations" are provided by default, this does not w
 
 Gdt helper solves this problem. It makes "Parse Configurations" for your environment.
 
-# Prepare to use
+## Prepare to use
 
-Before use this script, you need to install poetry and Python (3.8) to resolve its dependencies.
-You can install all dependencies in the following commands.
+Before use this script, you need to install [poetry](https://github.com/python-poetry/poetry) and Python (3.8) to resolve its dependencies.
+Then, you can install all dependencies for running gdt\_helper script in the following commands.
 
 ```
 $ poetry shell
@@ -20,7 +20,7 @@ $ poetry update
 $ poetry install
 ```
 
-# How to use
+## How to use
 
 1. Make "Parse Options" and paste it.
 
@@ -63,7 +63,7 @@ So, please add the following header includes to "Parse configuration"
 
 See also [example](./example/README.md).
 
-# Tested
+## Tested
 
 - Ubuntu 20.04
 - macOS Catalina
@@ -71,6 +71,10 @@ See also [example](./example/README.md).
 Windows is not supported. If you want to create some data types of Windows headers, you can do it via MinGW on Linux.
 For more details, see [Windows example](./example/README.md).
 
-# Special thanks
+## Special thanks
 
 The implementation of this script heavily relies on https://github.com/0x6d696368/ghidra-data/blob/master/typeinfo/README.md.
+
+## License
+
+[Apache-2.0](LICENSE)
