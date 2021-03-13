@@ -2,6 +2,10 @@ import os
 import re
 import subprocess
 from typing import List
+from clang_parser.CParser import CParser
+from clang_parser.CLexer import CLexer
+from clang_parser.CListener import CListener
+from antlr4 import CommonTokenStream, ParseTreeWalker, InputStream
 
 import typer
 
@@ -120,29 +124,26 @@ def make_parse_options(compiler_path: str) -> None:
         show_err("Cannot make parse options")
 
 
-def remove_inline_assembly(raw_in: str) -> str:
-    # Ghidra cannot recognize __asm__ syntax. So these are replaced by comments.
-    return re.sub(r"__asm__.*?;", r"/*__asm__*/;", raw_in, flags=re.DOTALL)
+class GhidraValidTokensExtractor(CListener):
+    def __init__(self) -> None:
+        self.code_out = ""
+
+    def enterFunctionDefinition(self, ctx: CParser.FunctionDefinitionContext) -> None:
+        input = ctx.start.getInputStream()
+        compound_stmt: CParser.CompoundStatementContext = ctx.getTypedRuleContext(CParser.CompoundStatementContext, 0)
+        self.code_out += input.getText(ctx.start.start, compound_stmt.start.start-1) + ";\n"
+
+    def enterDeclaration(self, ctx: CParser.DeclarationContext) -> None:
+        input = ctx.start.getInputStream()
+        self.code_out += input.getText(ctx.start.start, ctx.stop.stop) + "\n"
 
 
-def remove_return_braces(raw_in: str) -> str:
-    return re.sub(r"return[^;]*?{[^;]*?}.*?;", r"return;", raw_in, flags=re.DOTALL)
-
-
-def remove_braces_initialize(raw_in: str) -> str:
-    ret_str = ""
-    for line in raw_in.split("\n"):
-        if re.search(r"{[\d.,f ]*?}", line) is None:
-            ret_str += line + "\n"
-    return ret_str
-
-
-def remove_nonsupported_types(raw_in: str) -> str:
-    ret_str = ""
-    for line in raw_in.split("\n"):
-        if "__int128" not in line:
-            ret_str += line + "\n"
-    return ret_str
+def extract_valid_tokens(raw_in: str) -> str:
+    parser = CParser(CommonTokenStream(CLexer(InputStream(raw_in))))
+    walker = ParseTreeWalker()
+    listener = GhidraValidTokensExtractor()
+    walker.walk(listener, parser.compilationUnit())
+    return listener.code_out
 
 
 @app.command()
@@ -181,12 +182,9 @@ def make_file_to_parse(
         return
 
     source_to_parse = raw_out.stdout.decode("utf-8")
-    source_to_parse = remove_inline_assembly(source_to_parse)
+    source_to_parse = extract_valid_tokens(source_to_parse)
     if "x86_64-w64-mingw32-gcc" in compiler_path:
         show_warn("Post processing for mingw64")
-        source_to_parse = remove_return_braces(source_to_parse)
-        source_to_parse = remove_braces_initialize(source_to_parse)
-        source_to_parse = remove_nonsupported_types(source_to_parse)
         show_warn("You might encounter Ghidra parse errors for this file.")
         show_warn(
             "If so, please remove some functions (_cvtsh_ss in my envorinment)"

@@ -7,6 +7,7 @@ authors = ["Koh M. Nakagawa <tsunekou1019@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 typer = "^0.3.2"
+antlr4-python3-runtime = "^4.9.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
