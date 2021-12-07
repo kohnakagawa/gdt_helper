@@ -25,7 +25,7 @@ $ poetry install
 1. Make "Parse Options" and paste it.
 
 ```bash
-# Specify a compiler as an input argument. clang/gcc/x86_64-mingw32-gcc/i686-mingw32-gcc are supported.
+# Specify a compiler as an input argument. clang/gcc/x86_64-w64-mingw32-gcc/i686-w64-mingw32-gcc are supported.
 $ python gdt_helper.py make-parse-options clang
 Please past the following output to "Parse Options"
 
